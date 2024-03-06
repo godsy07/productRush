@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/User");
 const validateInput = require("../utils/joi/validate");
+const { getUserByUserId } = require("../utils/functions");
 const { handleServerError } = require("../middleware/errorHandling");
 
 const controller = "UserController";
@@ -60,9 +61,30 @@ const signUp = async (req, res) => {
       return res.status(400).json({ status: false, message: 'Account with this email already exists.' });
     }
 
-    user = await User.create({ first_name, last_name, meail: user_email, phone_no, password });
+    user = await User.create({ first_name, last_name, email: user_email, phone_no, password });
 
-    return res.status(200).json({ status: true, user, message: 'You have been signed up.' });
+    return res.status(200).json({ status: true, user, message: 'You have successfully signed up.' });
+  } catch (e) {
+    return handleServerError(res, controller);
+  }
+}
+
+const getUser = async (req, res) => {
+  try {
+    const { user_id } = req.params;
+
+    const user = await getUserByUserId(user_id);
+
+    return res.status(200).json({ status: true, user, message: "Fetched user details." })
+  } catch (e) {
+    return handleServerError(res, controller);
+  }
+}
+
+const getCurrentUser = async (req, res) => {
+  try {
+    const user = req.user;
+    return res.status(200).json({ status: true, user, message: "Fetched user details." })
   } catch (e) {
     return handleServerError(res, controller);
   }
@@ -71,4 +93,6 @@ const signUp = async (req, res) => {
 module.exports = {
   login,
   signUp,
+  getUser,
+  getCurrentUser,
 }
