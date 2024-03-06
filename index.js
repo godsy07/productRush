@@ -23,7 +23,7 @@ app.use(
 
 connectToDB();
 
-app.use("/product-rush/user", userRoutes);
+app.use("/product-rush/api/user", userRoutes);
 
 app.get('/', (req, res) => {
     return res.status(200).json({ status: true, message: "Welcome to Product Rush." })
