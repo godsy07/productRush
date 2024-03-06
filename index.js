@@ -15,11 +15,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser());
 app.use(express.static("public"));
-app.use(
-  mongoSanitize({
-    replaceWith: "_",
-  }),
-);
+app.use(mongoSanitize({ replaceWith: "_" }));
 
 connectToDB();
 
