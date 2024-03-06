@@ -48,9 +48,9 @@ const login = async (req, res) => {
 
 const signUp = async (req, res) => {
   try {
-    const { first_name, last_name, email, phone_no, password, confirm_password } = req.body
+    const { first_name, last_name, email, role, phone_no, password, confirm_password } = req.body
 
-    const { error_message } = validateInput("signUpSchema", { first_name, last_name, email, phone_no, password, confirm_password })
+    const { error_message } = validateInput("signUpSchema", { first_name, last_name, email, role, phone_no, password, confirm_password })
     if (error_message) {
       return res.status(400).json({ status: false, message: error_message });
     }
@@ -83,8 +83,7 @@ const getUser = async (req, res) => {
 
 const getCurrentUser = async (req, res) => {
   try {
-    const user = req.user;
-    return res.status(200).json({ status: true, user, message: "Fetched user details." })
+    return res.status(200).json({ status: true, user: req.user, message: "Fetched user details." })
   } catch (e) {
     return handleServerError(res, controller);
   }

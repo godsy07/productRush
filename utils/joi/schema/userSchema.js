@@ -9,6 +9,7 @@ const signUpSchema = Joi.object({
   first_name: Joi.string().min(1).max(30).required().label("First Name"),
   last_name: Joi.string().min(1).max(30).required().label("Last Name"),
   email: Joi.string().email().required().label("Email"),
+  role: Joi.string().valid('seller','customer').required().label("Role"),
   phone_no: Joi.string().min(10).max(10).required().label("Phone No"),
   password: Joi.string().min(6).max(40).required().label("Password"),
   confirm_password: Joi.any()
