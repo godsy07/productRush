@@ -1,3 +1,4 @@
+const cors = require('cors')
 const http = require('http');
 const express = require('express');
 const cookieParser = require('cookie-parser');
@@ -11,6 +12,11 @@ const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
+const corsOptions = {
+  origin: true,
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser());
@@ -22,7 +28,7 @@ connectToDB();
 app.use("/product-rush/api/user", userRoutes);
 
 app.get('/', (req, res) => {
-    return res.status(200).json({ status: true, message: "Welcome to Product Rush." })
+  return res.status(200).json({ status: true, message: "Welcome to Product Rush." })
 })
 
 const server = http.createServer(app);

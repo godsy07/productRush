@@ -1,9 +1,14 @@
+const jwt = require("jsonwebtoken");
+
 const User = require("../models/User");
 const validateInput = require("../utils/joi/validate");
+const { handleServerError } = require("../middleware/errorHandling");
+
+const controller = "UserController";
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body
+    const { email, password, remember_me } = req.body
 
     const { error_message } = validateInput("loginSchema", { email, password })
     if (error_message) {
@@ -21,9 +26,22 @@ const login = async (req, res) => {
       return res.status(400).json({ status: false, message: "Credentials are invalid." })
     }
 
-    return res.status(200).json({ status: true, token: '', message: 'You have been logged in.' });
+    let expireTime = "5d";
+    if (remember_me) {
+      expireTime = "14d";
+    }
+    const secretkey = process.env.PWD_TOKEN;
+    const token = jwt.sign(
+      {
+        id: user._id, email: user_email
+      },
+      secretkey,
+      { expiresIn: expireTime },
+    );
+
+    return res.status(200).json({ status: true, token, message: 'You have been logged in.' });
   } catch (e) {
-    return res.status(500).json({ status: false, message: "Something went wrong in server." });
+    return handleServerError(res, controller);
   }
 }
 
@@ -46,7 +64,7 @@ const signUp = async (req, res) => {
 
     return res.status(200).json({ status: true, user, message: 'You have been signed up.' });
   } catch (e) {
-    return res.status(500).json({ status: false, message: "Something went wrong in server." });
+    return handleServerError(res, controller);
   }
 }
 
