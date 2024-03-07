@@ -1,7 +1,7 @@
 const { getUserByUserId } = require("../utils/functions");
 
 const isAuth = async (req, res, next) => {
-  let token = req.cookies && req.cookies.blind_weight;
+  let token = req.cookies && req.cookies.product_rush_token;
 
   if (token === undefined) {
     token = req.body.headers && req.body.headers.Cookie;
