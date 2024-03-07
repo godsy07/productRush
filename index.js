@@ -9,6 +9,7 @@ require('dotenv').config();
 const { connectToDB } = require('./config/db');
 
 const userRoutes = require('./routes/userRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use(mongoSanitize({ replaceWith: "_" }));
 connectToDB();
 
 app.use("/product-rush/api/user", userRoutes);
+app.use("/product-rush/api/category", categoryRoutes);
 
 app.get('/', (req, res) => {
   return res.status(200).json({ status: true, message: "Welcome to Product Rush." })
