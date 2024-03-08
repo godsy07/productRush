@@ -34,7 +34,7 @@ const storage = multer.diskStorage({
   },
 });
 
-const uploadImage = multer({
+const upload = multer({
   storage: storage,
   fileFilter: fileImageFilter,
   limits: {
@@ -42,8 +42,8 @@ const uploadImage = multer({
   },
 });
 
-const uploadCategoryImage = (req, res, next) => {
-  uploadImage.single("image")(req, res, (err) => {
+const uploadImage = (req, res, next) => {
+  upload.single("image")(req, res, (err) => {
     if (err instanceof multer.MulterError) {
       return res.status(400).json({ status: false, message: err.message });
     } else if (err) {
@@ -65,4 +65,4 @@ const deleteFile = (image) => {
   }
 }
 
-module.exports = { deleteFile, uploadCategoryImage };
+module.exports = { deleteFile, uploadImage };

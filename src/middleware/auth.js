@@ -43,4 +43,14 @@ const isAdmin = (req, res, next) => {
   next();
 }
 
-module.exports = { isAuth, isAdmin }
+const isSeller = (req, res, next) => {
+  if (req.user.role !== 'customer' || req.user.role !== 'admin') {
+    return res.status(401).json({
+      status: false,
+      message: 'You are not authorized for this action.',
+    });
+  }
+  next();
+}
+
+module.exports = { isAuth, isAdmin, isSeller }
