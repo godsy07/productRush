@@ -31,7 +31,7 @@ const login = async (req, res) => {
     if (remember_me) {
       expireTime = "14d";
     }
-    const secretkey = process.env.PWD_TOKEN;
+    const secretkey = process.env.JWT_LOGIN_TOKEN;
     const token = jwt.sign(
       {
         id: user._id, email: user_email

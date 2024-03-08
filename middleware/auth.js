@@ -15,7 +15,7 @@ const isAuth = async (req, res, next) => {
     });
   }
   try {
-    const decoded = jwt.verify(token, process.env.PWD_TOKEN);
+    const decoded = jwt.verify(token, process.env.JWT_LOGIN_TOKEN);
     const user = await getUserByUserId(decoded.id);
     if (!user) {
       return res
