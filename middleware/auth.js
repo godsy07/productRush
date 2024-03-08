@@ -33,4 +33,14 @@ const isAuth = async (req, res, next) => {
   return next();
 }
 
-module.exports = { isAuth }
+const isAdmin = (req, res, next) => {
+  if (req.user.role !== 'admin') {
+    return res.status(401).json({
+      status: false,
+      message: 'You are not authorized for this action.',
+    });
+  }
+  next();
+}
+
+module.exports = { isAuth, isAdmin }
