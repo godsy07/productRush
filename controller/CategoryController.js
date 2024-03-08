@@ -55,6 +55,15 @@ const getCategories = async (req, res) => {
   }
 }
 
+const getParentCategories = async (req, res) => {
+  try {
+    const categories = await Category.find({ parent:{ $eq: null } });
+    return res.status(200).json({ status: true, categories, message: "Categories have been fetched." })
+  } catch (e) {
+    return handleServerError(res, controller);
+  }
+}
+
 const getSubCategories = async (req, res) => {
   try {
     const { category_id } = req.params
@@ -65,8 +74,19 @@ const getSubCategories = async (req, res) => {
   }
 }
 
+const getCategoriesForProducts = async (req, res) => {
+  try {
+    const categories = await Category.find({ parent:{ $ne: null } });
+    return res.status(200).json({ status: true, categories, message: "Categories have been fetched." })
+  } catch (e) {
+    return handleServerError(res, controller);
+  }
+}
+
 module.exports = {
   addCategory,
   getCategories,
   getSubCategories,
+  getParentCategories,
+  getCategoriesForProducts,
 }
