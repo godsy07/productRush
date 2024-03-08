@@ -8,8 +8,8 @@ require('dotenv').config();
 
 const { connectToDB } = require('./config/db');
 
-const userRoutes = require('./routes/userRoutes');
-const categoryRoutes = require('./routes/categoryRoutes');
+const userRoutes = require('./src/routes/userRoutes');
+const categoryRoutes = require('./src/routes/categoryRoutes');
 
 const app = express();
 

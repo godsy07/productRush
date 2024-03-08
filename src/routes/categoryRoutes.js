@@ -1,9 +1,9 @@
 const path = require("path");
 const express = require("express");
 
+const { isAuth, isAdmin } = require('../middleware/auth');
 const { uploadCategoryImage } = require("../middleware/files");
 const CategoryController = require('../controller/CategoryController');
-const { isAuth, isAdmin } = require('../middleware/auth');
 
 const router = express.Router()
 
