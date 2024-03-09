@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema(
     role: { type: String, enum: ['admin', 'seller', 'customer'], default: 'customer' },
     phone_no: { type: String, min: 10, max: 10, required: true },
     password: { type: String, min: 6, required: true },
+    products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'product' }],
   },
   { timestamps: true }
 );

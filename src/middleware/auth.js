@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken');
+
 const { getUserByUserId } = require("../utils/functions");
 
 const isAuth = async (req, res, next) => {
@@ -44,7 +46,7 @@ const isAdmin = (req, res, next) => {
 }
 
 const isSeller = (req, res, next) => {
-  if (req.user.role !== 'customer' || req.user.role !== 'admin') {
+  if (req.user.role !== 'customer') {
     return res.status(401).json({
       status: false,
       message: 'You are not authorized for this action.',

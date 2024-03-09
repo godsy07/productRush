@@ -5,4 +5,9 @@ const addCategorySchema = Joi.object({
   parent_id: Joi.string().allow(null).optional().label("Parent ID")
 })
 
-module.exports = { addCategorySchema }
+const addCategoryFilterSchema = Joi.object({
+  filters: Joi.array().items(Joi.string().required()).required().label("Filters"),
+  category_id: Joi.string().required().label("Category ID")
+})
+
+module.exports = { addCategorySchema, addCategoryFilterSchema }

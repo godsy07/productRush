@@ -10,6 +10,7 @@ const { connectToDB } = require('./config/db');
 
 const userRoutes = require('./src/routes/userRoutes');
 const categoryRoutes = require('./src/routes/categoryRoutes');
+const productRoutes = require('./src/routes/productRoutes');
 
 const app = express();
 
@@ -28,6 +29,7 @@ connectToDB();
 
 app.use("/product-rush/api/user", userRoutes);
 app.use("/product-rush/api/category", categoryRoutes);
+app.use("/product-rush/api/product", productRoutes);
 
 app.get('/', (req, res) => {
   return res.status(200).json({ status: true, message: "Welcome to Product Rush." })

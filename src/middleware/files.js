@@ -22,7 +22,7 @@ const fileImageFilter = (req, file, cb) => {
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // Specify the full path of image location to be saved in
-    const fullPath = path.join(__dirname, "..", `public/uploads`);
+    const fullPath = path.join(__dirname, "..","..", `public/uploads`);
     cb(null, fullPath);
   },
   filename: (req, file, cb) => {

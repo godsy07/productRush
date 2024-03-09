@@ -1,8 +1,10 @@
 const validateInput = require("../utils/joi/validate");
 const { handleServerError } = require("../middleware/errorHandling");
 
-const Category = require("../models/Category");
 const { deleteFile } = require("../middleware/files");
+
+const Category = require("../models/Category");
+const CategoryFilter = require("../models/CategoryFilter");
 
 const controller = "CategoryController";
 
@@ -20,7 +22,7 @@ const addCategory = async (req, res) => {
       deleteFile(image);
       return res.status(400).json({ status: false, message: error_message });
     }
-    
+
     // check if this category is already present
     let category = await Category.findOne({ name })
     if (category) {
@@ -46,6 +48,29 @@ const addCategory = async (req, res) => {
   }
 }
 
+const addCategoryFilters = async (req, res) => {
+  try {
+    const { filters, category_id } = req.body;
+
+    const { error_message } = validateInput("addCategoryFilterSchema", { filters, category_id })
+    if (error_message) {
+      return res.status(400).json({ status: false, message: error_message });
+    }
+
+    // check if this category is already present
+    let category = await Category.findById(category_id)
+    if (!category) {
+      return res.status(400).json({ status: false, message: "Category does not exist." })
+    }
+
+    const categoryFilter = await CategoryFilter.create({ filters, category });
+
+    return res.status(200).json({ status: true, categoryFilter, message: "Category filters have been added." })
+  } catch (e) {
+    return handleServerError(res, controller);
+  }
+}
+
 const getCategories = async (req, res) => {
   try {
     const categories = await Category.find().populate('parent');
@@ -57,7 +82,7 @@ const getCategories = async (req, res) => {
 
 const getParentCategories = async (req, res) => {
   try {
-    const categories = await Category.find({ parent:{ $eq: null } });
+    const categories = await Category.find({ parent: { $eq: null } });
     return res.status(200).json({ status: true, categories, message: "Categories have been fetched." })
   } catch (e) {
     return handleServerError(res, controller);
@@ -76,7 +101,7 @@ const getSubCategories = async (req, res) => {
 
 const getCategoriesForProducts = async (req, res) => {
   try {
-    const categories = await Category.find({ parent:{ $ne: null } });
+    const categories = await Category.find({ parent: { $ne: null } }).populate('categoryFilter');
     return res.status(200).json({ status: true, categories, message: "Categories have been fetched." })
   } catch (e) {
     return handleServerError(res, controller);
@@ -87,6 +112,7 @@ module.exports = {
   addCategory,
   getCategories,
   getSubCategories,
+  addCategoryFilters,
   getParentCategories,
   getCategoriesForProducts,
 }

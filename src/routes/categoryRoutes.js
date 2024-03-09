@@ -11,5 +11,6 @@ router.get('/get-parent-categories', CategoryController.getParentCategories);
 router.get('/get-sub-categories/:category_id', CategoryController.getSubCategories);
 router.get('/get-categories-for-product', CategoryController.getCategoriesForProducts);
 router.post('/add-category', isAuth, isAdmin, uploadImage, CategoryController.addCategory);
+router.post('/add-category-filters', isAuth, isAdmin, CategoryController.addCategoryFilters);
 
 module.exports = router;
