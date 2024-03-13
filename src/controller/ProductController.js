@@ -1,9 +1,9 @@
+const { deleteFile } = require("../middleware/files");
 const validateInput = require("../utils/joi/validate");
 const { handleServerError } = require("../middleware/errorHandling");
 
-const Category = require("../models/Category");
-const { deleteFile } = require("../middleware/files");
 const Product = require("../models/Product");
+const Category = require("../models/Category");
 const ProductFilter = require("../models/ProductFilter");
 
 const controller = "CategoryController";
@@ -54,6 +54,17 @@ const addProduct = async (req, res) => {
   }
 }
 
+const getMyProducts = async(req, res) => {
+  try {
+    const user = req.user;
+    const products = await Product.find({ seller: user._id }).lean();
+    return res.status(200).json({ status: true, products, message: "Products have been fetched." })
+  } catch(e) {
+    return handleServerError(res, controller);
+  }
+}
+
 module.exports = {
   addProduct,
+  getMyProducts,
 }

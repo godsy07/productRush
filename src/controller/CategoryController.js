@@ -63,7 +63,14 @@ const addCategoryFilters = async (req, res) => {
       return res.status(400).json({ status: false, message: "Category does not exist." })
     }
 
-    const categoryFilter = await CategoryFilter.create({ filters, category });
+    let categoryFilter = await CategoryFilter.findOne({ category });
+    if (categoryFilter) {
+      await CategoryFilter.updateOne({ category }, { filters });
+    } else {
+      categoryFilter = await CategoryFilter.create({ filters, category });
+      category.categoryFilter = categoryFilter;
+      await category.save();
+    }
 
     return res.status(200).json({ status: true, categoryFilter, message: "Category filters have been added." })
   } catch (e) {
@@ -108,11 +115,31 @@ const getCategoriesForProducts = async (req, res) => {
   }
 }
 
+const getCategoryFilters = async (req, res) => {
+  try {
+    const data = await CategoryFilter.find().populate('category');
+    return res.status(200).json({ status: true, data, message: "Category Filters have been fetched." })
+  } catch (e) {
+    return handleServerError(res, controller);
+  }
+}
+
+const getCategoriesWithNoFilters = async (req, res) => {
+  try {
+    const data = await Category.find({ categoryFilter: { $eq: null }, parent: { $ne: null } });
+    return res.status(200).json({ status: true, data, message: "Categories have been fetched." })
+  } catch (e) {
+    return handleServerError(res, controller);
+  }
+}
+
 module.exports = {
   addCategory,
   getCategories,
   getSubCategories,
   addCategoryFilters,
+  getCategoryFilters,
   getParentCategories,
   getCategoriesForProducts,
+  getCategoriesWithNoFilters,
 }
