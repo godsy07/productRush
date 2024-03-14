@@ -6,7 +6,7 @@ const ProductController = require('../controller/ProductController');
 
 const router = express.Router()
 
-// router.get('/get-products/', ProductController.getPaginatedProducts);
+router.get('/get-products/', ProductController.getPaginatedProducts);
 router.get('/get-my-products', isAuth, isSeller, ProductController.getMyProducts);
 router.post('/add-products', isAuth, isSeller, uploadImage, ProductController.addProduct);
 
