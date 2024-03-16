@@ -59,10 +59,23 @@ const uploadImage = (req, res, next) => {
   });
 };
 
+const uploadImageOptional = (req, res, next) => {
+  upload.single("image")(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({ status: false, message: err.message });
+    } else if (err) {
+      return res
+        .status(500)
+        .json({ status: false, message: "Could not upload image." });
+    }
+    next();
+  });
+};
+
 const deleteFile = (image) => {
   if (image) {
     fs.unlinkSync(image.path);
   }
 }
 
-module.exports = { deleteFile, uploadImage };
+module.exports = { deleteFile, uploadImage, uploadImageOptional };
