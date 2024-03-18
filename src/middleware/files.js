@@ -22,7 +22,7 @@ const fileImageFilter = (req, file, cb) => {
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // Specify the full path of image location to be saved in
-    const fullPath = path.join(__dirname, "..","..", `public/uploads`);
+    const fullPath = path.join(__dirname, "..", "..", `public/uploads`);
     cb(null, fullPath);
   },
   filename: (req, file, cb) => {
@@ -72,10 +72,49 @@ const uploadImageOptional = (req, res, next) => {
   });
 };
 
+const uploadMultipleImages = (req, res, next) => {
+  upload.array("images", 3)(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({ status: false, message: err.message });
+    } else if (err) {
+      return res
+        .status(500)
+        .json({ status: false, message: "Could not upload images." });
+    }
+
+    if (!req.files || (req.files && req.files.length === 0))
+      return res
+        .status(400)
+        .json({ status: false, message: "Images are required to proceed" });
+    next();
+  });
+};
+
+const uploadMultipleImagesOptional = (req, res, next) => {
+  upload.array("images", 3)(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({ status: false, message: err.message });
+    } else if (err) {
+      return res
+        .status(500)
+        .json({ status: false, message: "Could not upload images." });
+    }
+    next();
+  });
+};
+
 const deleteFile = (image) => {
   if (image) {
     fs.unlinkSync(image.path);
   }
 }
 
-module.exports = { deleteFile, uploadImage, uploadImageOptional };
+const deleteMultipleFiles = (images) => {
+  if (images && images.length > 0) {
+    images.forEach((img) => {
+      deleteFile(img);
+    })
+  }
+}
+
+module.exports = { deleteFile, deleteMultipleFiles, uploadImage, uploadImageOptional, uploadMultipleImages, uploadMultipleImagesOptional };

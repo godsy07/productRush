@@ -46,7 +46,7 @@ const isAdmin = (req, res, next) => {
 }
 
 const isSeller = (req, res, next) => {
-  if (req.user.role !== 'customer') {
+  if (req.user.role !== 'seller' && req.user.role !== 'admin') {
     return res.status(401).json({
       status: false,
       message: 'You are not authorized for this action.',

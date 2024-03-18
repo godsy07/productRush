@@ -1,6 +1,6 @@
 const urlModule = require('url');
 
-const { deleteFile } = require("../middleware/files");
+const { deleteFile, deleteMultipleFiles } = require("../middleware/files");
 const validateInput = require("../utils/joi/validate");
 const { handleServerError } = require("../middleware/errorHandling");
 
@@ -291,17 +291,19 @@ const getProductReviews = async (req, res) => {
 }
 
 const addProductReview = async (req, res) => {
-  let image_url = '';
-  const image = req.file;
-  if (image) {
-    image_url = 'uploads/' + req.file.filename;
+  let image_urls = [];
+  const images = req.files;
+  if (images && images.length > 0) {
+    images.forEach((img) => {
+      image_urls.push('uploads/' + img.filename);
+    })
   }
   try {
     const { rating, comment, product_id } = req.body;
 
     const { error_message } = validateInput("addProductReviewSchema", { rating, comment, product_id })
     if (error_message) {
-      deleteFile(image);
+      deleteMultipleFiles(images);
       return res.status(400).json({ status: false, message: error_message });
     }
 
@@ -309,23 +311,21 @@ const addProductReview = async (req, res) => {
 
     const product = await Product.findById(product_id);
     if (!product) {
+      deleteMultipleFiles(images);
       return res.status(400).json({ status: false, message: 'Product does not exist.' });
     }
 
-    const review = await Review.findById({ user: user._id });
+    let review = await Review.findById({ user: user._id });
     if (review) {
-      deleteFile(image);
+      deleteMultipleFiles(images);
       return res.status(400).json({ status: false, message: "You have already added a review." });
     }
 
-    console.log("rating: ", rating)
-    console.log("comment: ", comment)
-    console.log("product_id: ", product_id)
-    console.log("image: ", image)
+    review = await Review.create({ user, product, rating, comment, images: image_urls });
 
-    return res.status(200).json({ status: true, message: "Product review has been added." })
+    return res.status(200).json({ status: true, review, message: "Product review has been added." })
   } catch (e) {
-    deleteFile(image);
+    deleteMultipleFiles(images);
     return handleServerError(res, controller);
   }
 }
