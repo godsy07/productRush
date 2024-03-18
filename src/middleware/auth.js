@@ -13,7 +13,7 @@ const isAuth = async (req, res, next) => {
     return res.status(403).json({
       status: false,
       message:
-        "Auth token is missing. Please refresh the page and try logging in again.",
+        "You should be logged in to perform this action.",
     });
   }
   try {
