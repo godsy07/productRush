@@ -9,7 +9,6 @@ require('dotenv').config();
 const { connectToDB } = require('./config/db');
 
 const userRoutes = require('./src/routes/userRoutes');
-const adminRoutes = require('./src/routes/adminRoutes');
 const categoryRoutes = require('./src/routes/categoryRoutes');
 const productRoutes = require('./src/routes/productRoutes');
 
@@ -29,7 +28,6 @@ app.use(mongoSanitize({ replaceWith: "_" }));
 connectToDB();
 
 app.use("/product-rush/api/user", userRoutes);
-app.use("/product-rush/api/admin", adminRoutes);
 app.use("/product-rush/api/category", categoryRoutes);
 app.use("/product-rush/api/product", productRoutes);
 
