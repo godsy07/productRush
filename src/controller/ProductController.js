@@ -1,8 +1,9 @@
 const urlModule = require('url');
 
-const { deleteFile, deleteMultipleFiles } = require("../middleware/files");
+const { UPLOAD_IMAGE_URL } = require('../../config');
 const validateInput = require("../utils/joi/validate");
 const { handleServerError } = require("../middleware/errorHandling");
+const { deleteMultipleFiles, deleteMultipleImageFields } = require("../middleware/files");
 
 const Review = require('../models/Review');
 const Product = require("../models/Product");
@@ -16,6 +17,7 @@ const getPaginatedProducts = async (req, res) => {
   let page_no = query.page_no ? Number(query.page_no) : 1;
   let pagination = {
     total_records: 0,
+    page_records: 0,
     current_page: page_no,
     total_pages: 1,
     next_page: null,
@@ -23,7 +25,7 @@ const getPaginatedProducts = async (req, res) => {
   }
 
   if (isNaN(page_no)) {
-    return res.status(400).json({ status: false, data:[], pagination, message: 'Page number should be a number type' })
+    return res.status(400).json({ status: false, data: [], pagination, message: 'Page number should be a number type' })
   }
 
   try {
@@ -38,14 +40,11 @@ const getPaginatedProducts = async (req, res) => {
     }
 
     if (page_no > total_pages) {
-      return res.status(400).json({ status: false, data:[], pagination, message: 'Page number does not exist.' })
+      return res.status(400).json({ status: false, data: [], pagination, message: 'Page number does not exist.' })
     }
     if (page_no < 0) page_no = 1;
 
-    let pipeline = []
-    const host = process.env.HOST?process.env.HOST:"http://localhost";
-    const port = process.env.PORT?process.env.PORT:"5002";
-    const server = `${host}:${port}`;
+    let pipeline = [];
 
     pipeline = [
       ...pipeline,
@@ -94,34 +93,6 @@ const getPaginatedProducts = async (req, res) => {
         }
       },
       {
-        $addFields: {
-          image_url: {
-            $ifNull: [
-              {
-                $concat: [server, "$image_url"],
-              },
-              "",
-            ],
-          },
-          'category.image_url': {
-            $ifNull: [
-              {
-                $concat: [server, "$category.image_url"],
-              },
-              "",
-            ],
-          },
-          'category.parent.image_url': {
-            $ifNull: [
-              {
-                $concat: [server, "$category.parent.image_url"],
-              },
-              "",
-            ],
-          },
-        }
-      },
-      {
         $project: {
           _id: 1,
           name: 1,
@@ -158,11 +129,12 @@ const getPaginatedProducts = async (req, res) => {
       });
     }
 
-    const data = await Product.aggregate([ ...pipeline ])
+    const data = await Product.aggregate([...pipeline])
 
     pagination = {
       ...pagination,
       total_records: total_records,
+      page_records: data.length,
       next_page: next_page,
       total_pages: total_pages,
     }
@@ -184,28 +156,35 @@ const getMyProducts = async (req, res) => {
 }
 
 const addProduct = async (req, res) => {
-  let image_url = '';
-  const image = req.file;
-  if (image) {
-    image_url = 'uploads/' + req.file.filename;
+  const images = req.files;
+  let product_image = "";
+  let image_urls = [];
+  if (images['product-image']) {
+    product_image = UPLOAD_IMAGE_URL + '/uploads/' + images['product-image'][0].filename;
   }
+  if (images['description-images']) {
+    images['description-images'].forEach(img => {
+      image_urls.push(UPLOAD_IMAGE_URL + '/uploads/' + img.filename);
+    });
+  }
+
   try {
     const { name, brand, model, price_details, category_id } = req.body;
 
     const { error_message } = validateInput("addProductSchema", { name, brand, model, category_id, price_details })
     if (error_message) {
-      deleteFile(image);
+      deleteMultipleImageFields(images);
       return res.status(400).json({ status: false, message: error_message });
     }
 
     const category = await Category.findById(category_id);
     if (!category) {
-      deleteFile(image);
+      deleteMultipleImageFields(images);
       return res.status(400).json({ status: false, message: "Category not found." });
     }
 
     const seller = req.user;
-    const product = await Product.create({ name, brand, model, image_url, category, seller });
+    const product = await Product.create({ name, brand, model, product_image, images: image_urls, category, seller });
     const tempArray = []
     price_details.forEach(data => {
       const { filter, price } = data;
@@ -223,7 +202,7 @@ const addProduct = async (req, res) => {
 
     return res.status(200).json({ status: true, message: "Product has been added." })
   } catch (e) {
-    deleteFile(image);
+    deleteMultipleImageFields(images);
     return handleServerError(res, controller);
   }
 }
@@ -233,6 +212,7 @@ const getProductReviews = async (req, res) => {
   let page_no = query.page_no ? Number(query.page_no) : 1;
   let pagination = {
     total_records: 0,
+    page_records: 0,
     current_page: page_no,
     total_pages: 1,
     next_page: null,
@@ -240,7 +220,7 @@ const getProductReviews = async (req, res) => {
   }
 
   if (isNaN(page_no)) {
-    return res.status(400).json({ status: false, data:[], pagination, message: 'Page number should be a number type' })
+    return res.status(400).json({ status: false, data: [], pagination, message: 'Page number should be a number type' })
   }
   if (page_no < 0) page_no = 1;
 
@@ -256,7 +236,7 @@ const getProductReviews = async (req, res) => {
     }
 
     if (page_no > total_pages) {
-      return res.status(400).json({ status: false, data:[], pagination, message: 'Page number does not exist.' })
+      return res.status(400).json({ status: false, data: [], pagination, message: 'Page number does not exist.' })
     }
 
 
@@ -275,11 +255,12 @@ const getProductReviews = async (req, res) => {
       });
     }
 
-    const data = await Review.aggregate([ ...pipeline ])
+    const data = await Review.aggregate([...pipeline])
 
     pagination = {
       ...pagination,
       total_records: total_records,
+      page_records: data.length,
       next_page: next_page,
       total_pages: total_pages,
     }
@@ -295,13 +276,13 @@ const addProductReview = async (req, res) => {
   const images = req.files;
   if (images && images.length > 0) {
     images.forEach((img) => {
-      image_urls.push('uploads/' + img.filename);
+      image_urls.push(UPLOAD_IMAGE_URL + '/uploads/' + img.filename);
     })
   }
   try {
     const { rating, comment, product_id } = req.body;
 
-    const { error_message } = validateInput("addProductReviewSchema", { rating, comment, product_id })
+    const { error_message } = validateInput("addProductReviewSchema", { rating, comment, product_id });
     if (error_message) {
       deleteMultipleFiles(images);
       return res.status(400).json({ status: false, message: error_message });
@@ -315,7 +296,7 @@ const addProductReview = async (req, res) => {
       return res.status(400).json({ status: false, message: 'Product does not exist.' });
     }
 
-    let review = await Review.findById({ user: user._id });
+    let review = await Review.findOne({ user: user._id, product: product._id });
     if (review) {
       deleteMultipleFiles(images);
       return res.status(400).json({ status: false, message: "You have already added a review." });
@@ -323,7 +304,7 @@ const addProductReview = async (req, res) => {
 
     review = await Review.create({ user, product, rating, comment, images: image_urls });
 
-    return res.status(200).json({ status: true, review, message: "Product review has been added." })
+    return res.status(200).json({ status: true, review, message: "Product review has been added." });
   } catch (e) {
     deleteMultipleFiles(images);
     return handleServerError(res, controller);

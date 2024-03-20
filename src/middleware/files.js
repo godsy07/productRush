@@ -103,6 +103,26 @@ const uploadMultipleImagesOptional = (req, res, next) => {
   });
 };
 
+const uploadProductImages = (req, res, next) => {
+  upload.fields([
+    { name: 'product-image', maxCount: 1 },
+    { name: 'description-images', maxCount: 3 },
+  ])(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({ status: false, message: err.message });
+    } else if (err) {
+      return res.status(500).json({ status: false, message: "Could not upload images." });
+    }
+    if (!req.files['product-image'] || (req.files['product-image'] && req.files['product-image'].length === 0)) {
+      return res.status(400).json({ status: false, message: "Product image is required." });
+    }
+    if (!req.files['description-images'] || (req.files['description-images'] && req.files['description-images'].length === 0)) {
+      return res.status(400).json({ status: false, message: "Product Description images are required" });
+    }
+    next();
+  });
+};
+
 const deleteFile = (image) => {
   if (image) {
     fs.unlinkSync(image.path);
@@ -117,4 +137,10 @@ const deleteMultipleFiles = (images) => {
   }
 }
 
-module.exports = { deleteFile, deleteMultipleFiles, uploadImage, uploadImageOptional, uploadMultipleImages, uploadMultipleImagesOptional };
+const deleteMultipleImageFields = (imageObj) => {
+  for (const fieldName in imageObj) {
+    deleteMultipleFiles(imageObj[fieldName]);
+  }
+}
+
+module.exports = { deleteFile, deleteMultipleFiles, deleteMultipleImageFields, uploadImage, uploadImageOptional, uploadMultipleImages, uploadMultipleImagesOptional, uploadProductImages };
