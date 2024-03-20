@@ -26,6 +26,9 @@ const login = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ status: false, message: "Credentials are invalid." })
     }
+    if (user.role === 'admin') {
+      return res.status(401).json({ status: false, message: "You are not authorized." })
+    }
 
     let expireTime = "5d";
     if (remember_me) {
