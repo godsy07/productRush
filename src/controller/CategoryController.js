@@ -5,6 +5,7 @@ const { deleteFile } = require("../middleware/files");
 
 const Category = require("../models/Category");
 const CategoryFilter = require("../models/CategoryFilter");
+const { UPLOAD_IMAGE_URL } = require("../../config");
 
 const controller = "CategoryController";
 
@@ -12,7 +13,7 @@ const addCategory = async (req, res) => {
   let image_url = '';
   const image = req.file;
   if (image) {
-    image_url = 'uploads/' + req.file.filename;
+    image_url = UPLOAD_IMAGE_URL + '/uploads/' + req.file.filename;
   }
   try {
     const { name, parent_id } = req.body;
