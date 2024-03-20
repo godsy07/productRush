@@ -6,6 +6,7 @@ const { deleteFile } = require("../middleware/files");
 const Category = require("../models/Category");
 const CategoryFilter = require("../models/CategoryFilter");
 const { UPLOAD_IMAGE_URL } = require("../../config");
+const SchemaKeys = require("../utils/joi/schema/keys");
 
 const controller = "CategoryController";
 
@@ -18,7 +19,7 @@ const addCategory = async (req, res) => {
   try {
     const { name, parent_id } = req.body;
 
-    const { error_message } = validateInput("addCategorySchema", { name, parent_id })
+    const { error_message } = validateInput(SchemaKeys.ADD_CATEGORY, { name, parent_id })
     if (error_message) {
       deleteFile(image);
       return res.status(400).json({ status: false, message: error_message });
@@ -53,7 +54,7 @@ const addCategoryFilters = async (req, res) => {
   try {
     const { filters, category_id } = req.body;
 
-    const { error_message } = validateInput("addCategoryFilterSchema", { filters, category_id })
+    const { error_message } = validateInput(SchemaKeys.ADD_CATEGORY_FILTER, { filters, category_id })
     if (error_message) {
       return res.status(400).json({ status: false, message: error_message });
     }

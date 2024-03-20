@@ -1,6 +1,7 @@
 const urlModule = require('url');
 
 const { UPLOAD_IMAGE_URL } = require('../../config');
+const SchemaKeys = require('../utils/joi/schema/keys');
 const validateInput = require("../utils/joi/validate");
 const { handleServerError } = require("../middleware/errorHandling");
 const { deleteMultipleFiles, deleteMultipleImageFields } = require("../middleware/files");
@@ -171,7 +172,7 @@ const addProduct = async (req, res) => {
   try {
     const { name, brand, model, price_details, category_id } = req.body;
 
-    const { error_message } = validateInput("addProductSchema", { name, brand, model, category_id, price_details })
+    const { error_message } = validateInput(SchemaKeys.ADD_PRODUCT, { name, brand, model, category_id, price_details });
     if (error_message) {
       deleteMultipleImageFields(images);
       return res.status(400).json({ status: false, message: error_message });
@@ -282,7 +283,7 @@ const addProductReview = async (req, res) => {
   try {
     const { rating, comment, product_id } = req.body;
 
-    const { error_message } = validateInput("addProductReviewSchema", { rating, comment, product_id });
+    const { error_message } = validateInput(SchemaKeys.ADD_PRODUCT_REVIEW, { rating, comment, product_id });
     if (error_message) {
       deleteMultipleFiles(images);
       return res.status(400).json({ status: false, message: error_message });
