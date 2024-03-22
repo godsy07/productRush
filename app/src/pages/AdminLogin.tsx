@@ -3,7 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -117,7 +116,7 @@ const AdminLogin = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit">Login</Button>
+              <button type="submit" className="button button--success">Login</button>
             </form>
           </div>
         </Form>

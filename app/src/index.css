@@ -23,3 +23,7 @@
         @apply bg-yellow-500 text-white hover:bg-yellow-600
     }
 }
+
+.admin-content {
+    height: calc(100dvh - 4rem);
+}
