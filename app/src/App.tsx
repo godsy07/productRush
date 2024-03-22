@@ -6,6 +6,7 @@ import QueryProvider from "./context/QueryProvider";
 import { Toaster } from "./components/ui/toaster";
 import { AdminLogin, Dashboard, Home, UserLogin } from "./pages";
 import ProtectedRoutes from "./components/shared/ProtectedRoutes/ProtectedRoutes";
+import { AuthProvider } from "./context/AuthProvider";
 
 const App = () => {
   return (
@@ -13,14 +14,17 @@ const App = () => {
       <Toaster />
       <CookiesProvider defaultSetOptions={{ path: "/" }}>
         <QueryProvider>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<UserLogin />} />
-            <Route path="/admin-login" element={<AdminLogin />} />
-            <Route element={<ProtectedRoutes />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-            </Route>
-          </Routes>
+          <AuthProvider>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<UserLogin />} />
+              <Route path="/admin-login" element={<AdminLogin />} />
+
+              <Route element={<ProtectedRoutes />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+              </Route>
+            </Routes>
+          </AuthProvider>
         </QueryProvider>
       </CookiesProvider>
     </BrowserRouter>

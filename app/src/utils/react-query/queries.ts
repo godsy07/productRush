@@ -1,6 +1,6 @@
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 
-import { loginAdmin, loginUser } from "../api/api";
+import { getUserDetails, loginAdmin, loginUser } from "../api/api";
 
 export const useUserLogin = () => {
   return useMutation({
@@ -11,5 +11,11 @@ export const useUserLogin = () => {
 export const useAdminLogin = () => {
   return useMutation({
     mutationFn: ({ username, password }: { username: string, password: string }) => loginAdmin({ username, password })
+  })
+}
+
+export const useGetUserData = () => {
+  return useMutation({
+    mutationFn: ({ user_id }: { user_id: string }) => getUserDetails({ user_id })
   })
 }

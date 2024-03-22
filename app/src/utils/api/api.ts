@@ -37,12 +37,17 @@ const apiRequest = async ({ method, url, auth, data }: Partial<ApiRequestOptions
   }
 }
 
+export const getUserDetails = async ({ user_id }: { user_id: string }) => {
+  const response = await apiRequest({ method: 'GET', auth: false, url: `${REST_API_URL}/user/get-user/${user_id}` });
+  return response;
+}
+
 export const loginUser = async ({ username, password }: { username: string, password: string }) => {
-  const response = await apiRequest({ method: 'POST',  auth: false, url: REST_API_URL + '/user/login', data: { email: username, password } });
+  const response = await apiRequest({ method: 'POST', auth: false, url: `${REST_API_URL}/user/login`, data: { email: username, password } });
   return response;
 }
 
 export const loginAdmin = async ({ username, password }: { username: string, password: string }) => {
-  const response = await apiRequest({ method: 'POST',  auth: false, url: REST_API_URL + '/user/admin-login', data: { email: username, password } });
+  const response = await apiRequest({ method: 'POST', auth: false, url: `${REST_API_URL}/user/admin-login`, data: { email: username, password } });
   return response;
 }

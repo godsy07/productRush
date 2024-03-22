@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -12,9 +13,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/context/AuthProvider";
 import { useToast } from "@/components/ui/use-toast";
 import { useAdminLogin } from "@/utils/react-query/queries";
-import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
   username: z.string().toLowerCase().min(3, {
@@ -47,6 +48,7 @@ const formSchema = z.object({
 // })
 
 const AdminLogin = () => {
+  const { login } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const { mutateAsync: adminLogin } = useAdminLogin();
@@ -70,6 +72,7 @@ const AdminLogin = () => {
         variant: "success",
         description: response.message,
       });
+      login(response.token);
       navigate("/dashboard");
     } else {
       toast({
