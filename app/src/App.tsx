@@ -1,18 +1,28 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { CookiesProvider } from "react-cookie";
+
 import "./App.css";
 import QueryProvider from "./context/QueryProvider";
-import HomePage from "./pages/HomePage/HomePage";
-import AdminLoginPage from "./pages/AdminLoginPage/AdminLoginPage";
+import { Toaster } from "./components/ui/toaster";
+import { AdminLogin, Dashboard, Home, UserLogin } from "./pages";
+import ProtectedRoutes from "./components/shared/ProtectedRoutes/ProtectedRoutes";
 
 const App = () => {
   return (
     <BrowserRouter>
-    <QueryProvider>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/admin-login" element={<AdminLoginPage />} />
-      </Routes>
-    </QueryProvider>
+      <Toaster />
+      <CookiesProvider defaultSetOptions={{ path: "/" }}>
+        <QueryProvider>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<UserLogin />} />
+            <Route path="/admin-login" element={<AdminLogin />} />
+            <Route element={<ProtectedRoutes />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
+          </Routes>
+        </QueryProvider>
+      </CookiesProvider>
     </BrowserRouter>
   );
 };

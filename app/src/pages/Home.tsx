@@ -3,7 +3,7 @@ import Offers from "@/components/shared/Offers/Offers";
 import CategoryCards from "@/components/shared/CategoryCards/CategoryCards";
 import ItemContainer from "@/components/shared/ItemContainer/ItemContainer";
 
-const HomePage = () => {
+const Home = () => {
   return (
     <main>
       <Header />
@@ -14,4 +14,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default Home;

@@ -29,7 +29,7 @@ const login = async (req, res) => {
       return res.status(400).json({ status: false, message: "Credentials are invalid." })
     }
     if (user.role === 'admin') {
-      return res.status(401).json({ status: false, message: "You are not authorized." })
+      return res.status(401).json({ status: false, message: "You are not authorized for this action." })
     }
 
     let expireTime = "5d";
@@ -71,7 +71,7 @@ const adminLogin = async (req, res) => {
     }
     
     if (user.role !== 'admin') {
-      return res.status(401).json({ status: false, message: "You are not authorized." })
+      return res.status(401).json({ status: false, message: "You are not authorized for this action." })
     }
 
     let expireTime = "5d";
