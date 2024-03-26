@@ -11,7 +11,7 @@ const Product = require("../models/Product");
 const Category = require("../models/Category");
 const ProductFilter = require("../models/ProductFilter");
 
-const controller = "CategoryController";
+const controller = "ProductController";
 
 const getPaginatedProducts = async (req, res) => {
   const query = urlModule.parse(req.url, true).query;

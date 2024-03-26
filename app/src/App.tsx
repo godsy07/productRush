@@ -6,9 +6,10 @@ import QueryProvider from "./context/QueryProvider";
 import { Toaster } from "./components/ui/toaster";
 
 import { AuthProvider } from "./context/AuthProvider";
-import AdminRoot from "./components/shared/layouts/AdminRoot";
-import { AdminLogin, Dashboard, Home, UserLogin } from "./pages";
+import { AdminLogin, Checkout, Dashboard, Home, UserLogin } from "./pages";
+import AdminRootLayout from "./components/shared/layouts/AdminRootLayout";
 import ProtectedRoutes from "./components/shared/ProtectedRoutes/ProtectedRoutes";
+import UserRootLayout from "./components/shared/layouts/UserRootLayout";
 
 const App = () => {
   return (
@@ -23,8 +24,12 @@ const App = () => {
               <Route path="/admin-login" element={<AdminLogin />} />
 
               <Route element={<ProtectedRoutes />}>
-                <Route element={<AdminRoot />}>
+                <Route element={<AdminRootLayout />}>
                   <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/test" element={<Dashboard />} />
+                </Route>
+                <Route element={<UserRootLayout />}>
+                  <Route path="/checkout" element={<Checkout />} />
                 </Route>
               </Route>
             </Routes>
