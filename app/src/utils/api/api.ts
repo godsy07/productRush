@@ -51,3 +51,13 @@ export const loginAdmin = async ({ username, password }: { username: string, pas
   const response = await apiRequest({ method: 'POST', auth: false, url: `${REST_API_URL}/user/admin-login`, data: { email: username, password } });
   return response;
 }
+
+export const getCategories = async () => {
+  const response = await apiRequest({ method: 'GET', auth: false, url: `${REST_API_URL}/category/get-categories` });
+  return response;
+}
+
+export const getCategoryFilters = async () => {
+  const response = await apiRequest({ method: 'GET', auth: false, url: `${REST_API_URL}/category/get-category-filters` });
+  return response;
+}
