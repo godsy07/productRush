@@ -54,10 +54,49 @@ export const loginAdmin = async ({ username, password }: { username: string, pas
 
 export const getCategories = async () => {
   const response = await apiRequest({ method: 'GET', auth: false, url: `${REST_API_URL}/category/get-categories` });
-  return response;
+  if (response.status) return response.categories;
+}
+
+export const getParentCategories = async () => {
+  const response = await apiRequest({ method: 'GET', auth: false, url: `${REST_API_URL}/category/get-parent-categories` });
+  if (response.status) return response.categories;
 }
 
 export const getCategoryFilters = async () => {
   const response = await apiRequest({ method: 'GET', auth: false, url: `${REST_API_URL}/category/get-category-filters` });
   return response;
+  // if (response.status) return response.categories;
+}
+
+interface AddCategoryOptions {
+  name: string;
+  parent_id: string;
+  image: File[];
+}
+
+export const addCategory = async ({ name, parent_id, image }: AddCategoryOptions) => {
+  try {
+    const formData = new FormData();
+    formData.append('name', name);
+    if (parent_id) formData.append('parent_id', parent_id);
+    formData.append("image", image[0]);
+
+    const response = await axios({
+      method: 'POST',
+      data: formData,
+      withCredentials: true,
+      url:`${REST_API_URL}/category/add-category`,
+    });
+    if (response.status === 200) {
+      console.log(response);
+      return response.data;
+    }
+  } catch(e) {
+    if (axios.isAxiosError(e)) {
+      return e.response?.data || { status: false, message: "Unknown error occurred" };
+    } else {
+      console.log(e)
+      return { status: false, message: "Something went wrong!!!" };
+    }
+  }
 }
