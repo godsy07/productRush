@@ -1,10 +1,15 @@
-import React from "react";
+import { MdSpaceDashboard } from "react-icons/md";
+
+import AdminPageLayout from "@/components/shared/layouts/AdminPageLayout";
 
 const Dashboard = () => {
   return (
-    <div>
-      Dashboard
-    </div>
+    <AdminPageLayout
+      title="Dashboard"
+      icon={<MdSpaceDashboard className="me-1" />}
+    >
+      <h2>Dashboard</h2>
+    </AdminPageLayout>
   );
 };
 
