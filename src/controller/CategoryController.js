@@ -17,9 +17,9 @@ const addCategory = async (req, res) => {
     image_url = UPLOAD_IMAGE_URL + '/uploads/' + req.file.filename;
   }
   try {
-    const { name, parent_id } = req.body;
+    const { name, parent_id, filters } = req.body;
 
-    const { error_message } = validateInput(SchemaKeys.ADD_CATEGORY, { name, parent_id })
+    const { error_message } = validateInput(SchemaKeys.ADD_CATEGORY, { name, parent_id, filters })
     if (error_message) {
       deleteFile(image);
       return res.status(400).json({ status: false, message: error_message });
@@ -33,8 +33,9 @@ const addCategory = async (req, res) => {
     }
 
     const saveObject = { name, image_url };
+    let parent;
     if (parent_id) {
-      const parent = await Category.findById(parent_id);
+      parent = await Category.findById(parent_id);
       if (!parent) {
         deleteFile(image);
         return res.status(400).json({ status: false, message: "Parent category does not exist." });
@@ -43,39 +44,15 @@ const addCategory = async (req, res) => {
     }
     category = await Category.create(saveObject);
 
-    return res.status(200).json({ status: true, category, message: "Category has been added." })
-  } catch (e) {
-    deleteFile(image);
-    return handleServerError(res, controller);
-  }
-}
-
-const addCategoryFilters = async (req, res) => {
-  try {
-    const { filters, category_id } = req.body;
-
-    const { error_message } = validateInput(SchemaKeys.ADD_CATEGORY_FILTER, { filters, category_id })
-    if (error_message) {
-      return res.status(400).json({ status: false, message: error_message });
-    }
-
-    // check if this category is already present
-    let category = await Category.findById(category_id)
-    if (!category) {
-      return res.status(400).json({ status: false, message: "Category does not exist." })
-    }
-
-    let categoryFilter = await CategoryFilter.findOne({ category });
-    if (categoryFilter) {
-      await CategoryFilter.updateOne({ category }, { filters });
-    } else {
-      categoryFilter = await CategoryFilter.create({ filters, category });
+    if (parent) {
+      const categoryFilter = await CategoryFilter.create({ filters, category });
       category.categoryFilter = categoryFilter;
       await category.save();
     }
 
-    return res.status(200).json({ status: true, categoryFilter, message: "Category filters have been added." })
+    return res.status(200).json({ status: true, category, message: "Category has been added." })
   } catch (e) {
+    deleteFile(image);
     return handleServerError(res, controller);
   }
 }
@@ -139,7 +116,6 @@ module.exports = {
   addCategory,
   getCategories,
   getSubCategories,
-  addCategoryFilters,
   getCategoryFilters,
   getParentCategories,
   getCategoriesForProducts,
