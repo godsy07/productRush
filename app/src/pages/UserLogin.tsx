@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,8 +13,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/context/AuthProvider";
 import { useToast } from "@/components/ui/use-toast";
 import { useUserLogin } from "@/utils/react-query/queries";
+import Spinner from "@/components/shared/Spinner/Spinner";
 
 const formSchema = z.object({
   username: z.string().toLowerCase().min(3, {
@@ -31,6 +33,7 @@ const formSchema = z.object({
 });
 
 const UserLogin = () => {
+  const { authUser, isLoading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const { mutateAsync: userLogin } = useUserLogin();
@@ -65,44 +68,63 @@ const UserLogin = () => {
   }
   return (
     <div className="flex justify-center items-center p-3 mt-5 lg:mt-12">
-      <div className="justify-center items-center w-full lg:w-1/2 xl:w-1/4 border-2 px-3 py-4 border-spacing-1 rounded-xl">
-        <Form {...form}>
-          <div className="sm:w-420 flex-center flex-col">
-            <h2 className="h3-bold md:h2-bold">User Login</h2>
-            <hr className="my-2" />
-
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your username" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your username" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">Login</Button>
-            </form>
+      {isLoading ? (
+        <div className="flex justify-center">
+          <div className="w-24">
+            <Spinner />
           </div>
-        </Form>
-      </div>
+        </div>
+      ) : authUser ? (
+        <>
+          {authUser.role === "admin" ? (
+            <Navigate to="/dashboard" />
+          ) : (
+            <Navigate to="/" />
+          )}
+        </>
+      ) : (
+        <div className="justify-center items-center w-full lg:w-1/2 xl:w-1/4 border-2 px-3 py-4 border-spacing-1 rounded-xl">
+          <Form {...form}>
+            <div className="sm:w-420 flex-center flex-col">
+              <h2 className="h3-bold md:h2-bold">User Login</h2>
+              <hr className="my-2" />
+
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-2"
+              >
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Username</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your username" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your username" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit">Login</Button>
+              </form>
+            </div>
+          </Form>
+        </div>
+      )}
     </div>
   );
 };

@@ -51,16 +51,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [cookies, setCookie, removeCookie] = useCookies(["product_rush_token"]);
 
   const login = (token: string) => {
+    setIsLoading(true);
     setCookie("product_rush_token", token, { path: "/" });
-    setIsAuthenticated(true);
+    checkToken(token);
   };
 
   const logout = () => {
     removeCookie("product_rush_token", { path: "/" });
+    setAuthUser(null);
     setIsAuthenticated(false);
   };
 
-  const getUser = async(user_id: string) => {
+  const getUser = async (user_id: string) => {
     const response = await getUserData({ user_id });
     if (response.status && response.user) {
       const user = response.user;
@@ -68,23 +70,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsAuthenticated(true);
     }
     setIsLoading(false);
-  }
+  };
+
+  const checkToken = (token: string) => {
+    const decodedToken: { exp: number; id: string } = jwtDecode(token);
+    const expirationTime = decodedToken.exp * 1000; // Convert to milliseconds
+    const currentTime = Date.now();
+
+    if (expirationTime > currentTime) {
+      getUser(decodedToken.id);
+    } else {
+      setIsAuthenticated(false);
+      logout();
+      setIsLoading(false);
+    }
+  };
 
   // Check if user is already authenticated on component mount
   useEffect(() => {
     const token = cookies["product_rush_token"];
     if (token) {
-      const decodedToken: { exp: number; id: string } = jwtDecode(token);
-      const expirationTime = decodedToken.exp * 1000; // Convert to milliseconds
-      const currentTime = Date.now();
-
-      if (expirationTime > currentTime) {
-        getUser(decodedToken.id);
-      } else {
-        setIsAuthenticated(false);
-        logout();
-        setIsLoading(false);
-      }
+      checkToken(token);
     } else {
       setIsAuthenticated(false);
       setIsLoading(false);
@@ -92,7 +98,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [cookies]);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, isLoading, authUser }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, login, logout, isLoading, authUser }}
+    >
       {children}
     </AuthContext.Provider>
   );

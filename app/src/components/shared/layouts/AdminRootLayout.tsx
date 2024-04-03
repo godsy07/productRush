@@ -59,12 +59,12 @@ const AdminRootLayout: React.FC<Props> = ({ children }) => {
     });
     if (!confirmLogout.isConfirmed) return;
     logout();
-    navigate("/admin-login");
     toast({
       title: "success",
       variant: "success",
       description: "You have been logged out.",
     });
+    navigate("/admin-login");
   };
 
   return (

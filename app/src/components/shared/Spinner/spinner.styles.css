@@ -1,0 +1,17 @@
+.spinner {
+  border-width: 4px; /* Thickness of the spinner */
+  border-top-color: transparent; /* Color of the top border */
+  border-right-color: transparent; /* Color of the right border */
+  border-bottom-color: currentColor; /* Color of the bottom border */
+  border-left-color: currentColor; /* Color of the left border */
+  animation: spin 1s linear infinite; /* Animation properties */
+  border-radius: 9999px; /* To make the spinner a circle */
+  height: 48px; /* Height of the spinner */
+  width: 48px; /* Width of the spinner */
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg); /* Rotate the spinner */
+  }
+}
