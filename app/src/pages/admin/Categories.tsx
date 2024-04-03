@@ -1,6 +1,4 @@
-import {
-  ColumnDef,
-} from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 import { FaEdit } from "react-icons/fa";
 import { MdCategory } from "react-icons/md";
 
@@ -10,10 +8,17 @@ import AdminPageLayout from "@/components/shared/layouts/AdminPageLayout";
 import AddCategory from "@/components/shared/AddCategory/AddCategory";
 import Datatable from "@/components/shared/Datatable/Datatable";
 
+export type Parent = {
+  _id: string;
+  name: string;
+  image_url: string;
+};
+
 export type CategoryProps = {
   _id: string;
   name: string;
   image_url: string;
+  parent?: Parent;
 };
 
 const Categories = () => {
@@ -21,7 +26,7 @@ const Categories = () => {
 
   const handleEditCategory = (category_id: string) => {
     console.log("category_id: ", category_id);
-  }
+  };
 
   const columns: ColumnDef<CategoryProps>[] = [
     {
@@ -56,12 +61,34 @@ const Categories = () => {
     {
       accessorKey: "image_url",
       header: "Image",
-      cell: ({ row }) => <img src={row.getValue("image_url")} className="max-h-16" />,
+      cell: ({ row }) => (
+        <img src={row.getValue("image_url")} className="max-h-16" />
+      ),
+    },
+    {
+      accessorKey: "parent",
+      header: "Parent",
+      cell: ({ row }) => (
+        <div className="flex gap-1 items-center capitalize">
+          {row.original.parent ? (
+            <>
+              {row.original.parent?.name}&nbsp;
+              <img src={row.original.parent?.image_url} className="max-h-10" />
+            </>
+          ) : (
+            "NA"
+          )}
+        </div>
+      ),
     },
     {
       id: "_id",
       header: "Actions",
-      cell: ({ row }) => <div><FaEdit onClick={() => handleEditCategory(row.original._id)} /></div>,
+      cell: ({ row }) => (
+        <div>
+          <FaEdit onClick={() => handleEditCategory(row.original._id)} />
+        </div>
+      ),
     },
   ];
 

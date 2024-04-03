@@ -64,8 +64,7 @@ export const getParentCategories = async () => {
 
 export const getCategoryFilters = async () => {
   const response = await apiRequest({ method: 'GET', auth: false, url: `${REST_API_URL}/category/get-category-filters` });
-  return response;
-  // if (response.status) return response.categories;
+  if (response.status) return response.data;
 }
 
 interface AddCategoryOptions {
