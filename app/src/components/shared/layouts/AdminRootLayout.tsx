@@ -1,9 +1,10 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
-import Swal from 'sweetalert2';
-import { FaFilter, FaUser   } from 'react-icons/fa';
-import { ImExit  } from 'react-icons/im';
+import React, { ReactNode } from "react";
+import Swal from "sweetalert2";
+import { Link, useNavigate } from "react-router-dom";
+import { FaFilter, FaUser } from "react-icons/fa";
+import { ImExit } from "react-icons/im";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { MdSpaceDashboard, MdCategory  } from "react-icons/md";
+import { MdSpaceDashboard, MdCategory } from "react-icons/md";
 
 import NavLinkTab from "./NavLinkTab";
 import { useAuth } from "@/context/AuthProvider";
@@ -21,23 +22,39 @@ import {
 import { Button } from "@/components/ui/button";
 
 const navLinksArray = [
-  { to: "/dashboard", title: "Dashboard", icon: <MdSpaceDashboard className="me-1" /> },
-  { to: "/categories", title: "Categories", icon: <MdCategory className="me-1" /> },
-  { to: "/category-filters", title: "Filters", icon: <FaFilter className="me-1" /> },
+  {
+    to: "/dashboard",
+    title: "Dashboard",
+    icon: <MdSpaceDashboard className="me-1" />,
+  },
+  {
+    to: "/categories",
+    title: "Categories",
+    icon: <MdCategory className="me-1" />,
+  },
+  {
+    to: "/category-filters",
+    title: "Filters",
+    icon: <FaFilter className="me-1" />,
+  },
   { to: "/my-profile", title: "My Profile", icon: <FaUser className="me-1" /> },
 ];
 
-const AdminRootLayout = () => {
+interface Props {
+  children: ReactNode;
+}
+
+const AdminRootLayout: React.FC<Props> = ({ children }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const { toast } = useToast();
 
   const handleLogout = async () => {
     const confirmLogout = await Swal.fire({
-      icon: 'warning',
-      title: 'Wait',
-      text: 'Are your sure, you want to logout?',
-      confirmButtonText: 'Yes, I am',
+      icon: "warning",
+      title: "Wait",
+      text: "Are your sure, you want to logout?",
+      confirmButtonText: "Yes, I am",
       showCancelButton: true,
     });
     if (!confirmLogout.isConfirmed) return;
@@ -59,7 +76,9 @@ const AdminRootLayout = () => {
         <div className="block md:hidden lg:hidden">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline"><GiHamburgerMenu/></Button>
+              <Button variant="outline">
+                <GiHamburgerMenu />
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
@@ -96,12 +115,13 @@ const AdminRootLayout = () => {
             onClick={handleLogout}
             className="flex items-center text-left border border-3 p-2 bg-blue-800 border-blue-400 text-white w-full rounded-md font-medium hover:bg-red-400 hover:border-gray-100"
           >
-            <ImExit className="me-1"/>Logout
+            <ImExit className="me-1" />
+            Logout
           </button>
         </div>
 
         <div className=" bg-white w-full p-5">
-          <Outlet />
+          {children}
         </div>
       </div>
     </div>

@@ -44,6 +44,6 @@ export const useGetCategoryFilters = () => {
 
 export const useAddCategory = () => {
   return useMutation({
-    mutationFn: ({ name, parent_id, image }: { name: string, parent_id: string, image: File[] }) => addCategory({ name, parent_id, image })
+    mutationFn: ({ name, parent_id, image, filters }: { name: string, parent_id: string, image: File[], filters: string[] }) => addCategory({ name, parent_id, image, filters })
   })
 }

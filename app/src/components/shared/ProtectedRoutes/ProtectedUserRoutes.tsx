@@ -1,7 +1,8 @@
 import { useAuth } from "@/context/AuthProvider";
 import { Outlet, Navigate } from "react-router-dom";
+import UserRootLayout from "../layouts/UserRootLayout";
 
-const ProtectedRoutes = () => {
+const ProtectedUserRoutes = () => {
   const { isAuthenticated, isLoading } = useAuth();
 
   return (
@@ -14,7 +15,9 @@ const ProtectedRoutes = () => {
             <Navigate to="/login" />
           ) : (
             <>
-              <Outlet />
+              <UserRootLayout>
+                <Outlet />
+              </UserRootLayout>
             </>
           )}
         </>
@@ -23,4 +26,4 @@ const ProtectedRoutes = () => {
   );
 };
 
-export default ProtectedRoutes;
+export default ProtectedUserRoutes;

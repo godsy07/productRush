@@ -46,8 +46,8 @@ const addCategory = async (req, res) => {
 
     if (parent) {
       const categoryFilter = await CategoryFilter.create({ filters, category });
-      category.categoryFilter = categoryFilter;
-      await category.save();
+      await Category.updateOne({ _id: category._id },{ categoryFilter });
+      category = await Category.findById(category._id);
     }
 
     return res.status(200).json({ status: true, category, message: "Category has been added." })

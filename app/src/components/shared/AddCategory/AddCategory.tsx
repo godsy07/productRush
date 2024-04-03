@@ -47,7 +47,14 @@ const formSchema = z.object({
       message: "Name must be at most 3 characters",
     }),
   parent_id: z.string(),
-  image: z.custom<File[]>(),
+  filters: z.array(z.string()).optional(),
+  // image: z.custom<File[]>(),
+  image: z.custom<File[]>((files: any) => {
+    if (!files || files.length === 0) {
+      throw new Error("Image is required");
+    }
+    return files;
+  }),
 });
 
 const AddCategory = () => {
@@ -61,19 +68,23 @@ const AddCategory = () => {
       name: "",
       parent_id: "",
       image: [],
+      filters: [],
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { name, parent_id, image } = values;
+    const { name, parent_id, image, filters } = values;
     const parent = parent_id && parent_id !== "no_parent" ? parent_id : "";
-    const response = await addCategory({ name, parent_id: parent, image });
+    const filterValue = filters?filters:[];
+
+    const response = await addCategory({ name, parent_id: parent, image, filters: filterValue });
     if (response.status) {
       toast({
         title: "Success",
         variant: "success",
         description: response.message,
       });
+      form.reset();
     } else {
       toast({
         title: "Error",
@@ -91,7 +102,7 @@ const AddCategory = () => {
           Add Category
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent>
         <Form {...form}>
           <DialogHeader>
             <DialogTitle>Add Category</DialogTitle>
@@ -156,6 +167,30 @@ const AddCategory = () => {
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="filters"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Filters (Required if parent is selected)</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter filters (comma separated)"
+                      {...field}
+                      onChange={(e) => {
+                        const filters = e.target.value
+                          .split(",")
+                          .map((filter) => filter.trim());
+                        field.onChange(filters);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <DialogFooter>
               <Button type="submit">Add</Button>
             </DialogFooter>

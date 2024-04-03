@@ -71,14 +71,20 @@ export const getCategoryFilters = async () => {
 interface AddCategoryOptions {
   name: string;
   parent_id: string;
+  filters: string[];
   image: File[];
 }
 
-export const addCategory = async ({ name, parent_id, image }: AddCategoryOptions) => {
+export const addCategory = async ({ name, parent_id, image, filters }: AddCategoryOptions) => {
   try {
     const formData = new FormData();
     formData.append('name', name);
-    if (parent_id) formData.append('parent_id', parent_id);
+    if (parent_id) {
+      formData.append('parent_id', parent_id);
+      for (const filter of filters) {
+        formData.append('filters[]', filter);
+      }
+    }
     formData.append("image", image[0]);
 
     const response = await axios({

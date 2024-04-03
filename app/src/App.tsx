@@ -6,10 +6,18 @@ import QueryProvider from "./context/QueryProvider";
 import { Toaster } from "./components/ui/toaster";
 
 import { AuthProvider } from "./context/AuthProvider";
-import { AdminLogin, Categories, Checkout, Dashboard, Filters, Home, MyProfile, UserLogin } from "./pages";
-import AdminRootLayout from "./components/shared/layouts/AdminRootLayout";
-import ProtectedRoutes from "./components/shared/ProtectedRoutes/ProtectedRoutes";
-import UserRootLayout from "./components/shared/layouts/UserRootLayout";
+import {
+  AdminLogin,
+  Categories,
+  Checkout,
+  Dashboard,
+  Filters,
+  Home,
+  MyProfile,
+  UserLogin,
+} from "./pages";
+import ProtectedUserRoutes from "./components/shared/ProtectedRoutes/ProtectedUserRoutes";
+import ProtectedAdminRoutes from "./components/shared/ProtectedRoutes/ProtectedAdminRoutes";
 
 const App = () => {
   return (
@@ -23,16 +31,15 @@ const App = () => {
               <Route path="/login" element={<UserLogin />} />
               <Route path="/admin-login" element={<AdminLogin />} />
 
-              <Route element={<ProtectedRoutes />}>
-                <Route element={<AdminRootLayout />}>
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/categories" element={<Categories />} />
-                  <Route path="/category-filters" element={<Filters />} />
-                  <Route path="/my-profile" element={<MyProfile />} />
-                </Route>
-                <Route element={<UserRootLayout />}>
-                  <Route path="/checkout" element={<Checkout />} />
-                </Route>
+              <Route element={<ProtectedAdminRoutes />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/categories" element={<Categories />} />
+                <Route path="/category-filters" element={<Filters />} />
+                <Route path="/my-profile" element={<MyProfile />} />
+              </Route>
+
+              <Route element={<ProtectedUserRoutes />}>
+                <Route path="/checkout" element={<Checkout />} />
               </Route>
             </Routes>
           </AuthProvider>
