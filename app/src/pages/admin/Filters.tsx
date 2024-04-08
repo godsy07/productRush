@@ -22,7 +22,6 @@ export type CategoryFilterProps = {
 
 const Filters = () => {
   const { data: filters } = useGetCategoryFilters();
-  console.log("filters: ", filters);
 
   const columns: ColumnDef<CategoryFilterProps>[] = [
     {

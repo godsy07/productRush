@@ -14,6 +14,7 @@ import {
   Filters,
   Home,
   MyProfile,
+  NotFound,
   UserLogin,
 } from "./pages";
 import ProtectedUserRoutes from "./components/shared/ProtectedRoutes/ProtectedUserRoutes";
@@ -41,6 +42,8 @@ const App = () => {
               <Route element={<ProtectedUserRoutes />}>
                 <Route path="/checkout" element={<Checkout />} />
               </Route>
+
+              <Route path="/*" element={<NotFound />} />
             </Routes>
           </AuthProvider>
         </QueryProvider>

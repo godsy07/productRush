@@ -37,6 +37,11 @@ const apiRequest = async ({ method, url, auth, data }: Partial<ApiRequestOptions
   }
 }
 
+export const getCurrentUserDetails = async () => {
+  const response = await apiRequest({ method: 'GET', auth: true, url: `${REST_API_URL}/user/get-current-user` });
+  if (response.status) return response.user
+}
+
 export const getUserDetails = async ({ user_id }: { user_id: string }) => {
   const response = await apiRequest({ method: 'GET', auth: false, url: `${REST_API_URL}/user/get-user/${user_id}` });
   return response;

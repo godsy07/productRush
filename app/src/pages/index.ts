@@ -1,5 +1,6 @@
 
 export { default as Home } from './Home';
+export { default as NotFound } from './NotFound';
 export { default as UserLogin } from './UserLogin';
 export { default as AdminLogin } from './AdminLogin';
 

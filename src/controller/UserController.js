@@ -130,7 +130,8 @@ const getUser = async (req, res) => {
 
 const getCurrentUser = async (req, res) => {
   try {
-    return res.status(200).json({ status: true, user: req.user, message: "Fetched user details." })
+    const { products, password, ...user } = req.user;
+    return res.status(200).json({ status: true, user, message: "Fetched user details." })
   } catch (e) {
     return handleServerError(res, controller);
   }

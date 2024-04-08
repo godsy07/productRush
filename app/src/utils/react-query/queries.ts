@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
 
-import { addCategory, getCategories, getCategoryFilters, getParentCategories, getUserDetails, loginAdmin, loginUser } from "../api/api";
+import { addCategory, getCategories, getCategoryFilters, getCurrentUserDetails, getParentCategories, getUserDetails, loginAdmin, loginUser } from "../api/api";
 import { QUERY_KEYS } from "./queryKeys";
 
 export const useUserLogin = () => {
@@ -18,6 +18,13 @@ export const useAdminLogin = () => {
 export const useGetUserData = () => {
   return useMutation({
     mutationFn: ({ user_id }: { user_id: string }) => getUserDetails({ user_id })
+  })
+}
+
+export const useGetCurrentUser = () => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_CURRENT_USER],
+    queryFn: getCurrentUserDetails,
   })
 }
 
